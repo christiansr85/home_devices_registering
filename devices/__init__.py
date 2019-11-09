@@ -25,7 +25,6 @@ def teardown_db(exception):
 
 @app.route('/')
 def index():
-    # return 'Hello, World!!'
     with open(os.path.dirname(app.root_path) + '/README.md', 'r') as markdown_file:
         content = markdown_file.read()
 
@@ -42,7 +41,7 @@ class DeviceList(Resource):
         for key in keys:
             devices.append(shelf[key])
 
-        return { 'message': 'Success', 'data': devices }
+        return { 'data': devices }
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -58,7 +57,7 @@ class DeviceList(Resource):
         shelf = get_db()
         shelf[args['identifier']] = args
 
-        return { 'message': 'Device registered!', 'data': args }, 201
+        return { 'data': args }, 201
 
 class Device(Resource):
     def get(self, identifier):
@@ -66,16 +65,16 @@ class Device(Resource):
 
         # 404 if the device doesn't exist in the data store
         if not (identifier in shelf):
-            return { 'message': 'Device not found...', 'data': {} }, 404
+            return { 'data': {} }, 404
 
-        return { 'message': 'Device found!', 'data': shelf[identifier] }, 200
+        return { 'data': shelf[identifier] }, 200
 
     def delete(self, identifier):
         shelf = get_db()
 
         # 404 if the device doesn't exist in the data store
         if not (identifier in shelf):
-            return { 'message': 'Device not found...', 'data': {} }, 404
+            return { 'data': {} }, 404
 
         del shelf[identifier]
         return '', 204
